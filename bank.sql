@@ -25,10 +25,13 @@ DROP TABLE IF EXISTS `Accounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Accounts` (
-  `Account_Number` int NOT NULL AUTO_INCREMENT,
+  `Account_Number` bigint unsigned NOT NULL AUTO_INCREMENT,
   `Date_Of_Creation` date NOT NULL,
+  `Customer_Id` int NOT NULL,
   `Account_Balance` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`Account_Number`)
+  `Account_Type` int NOT NULL,
+  PRIMARY KEY (`Account_Number`),
+  UNIQUE KEY `Account_Number` (`Account_Number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -42,29 +45,83 @@ LOCK TABLES `Accounts` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `Admin`
+-- Table structure for table `Bank_Representative`
 --
 
-DROP TABLE IF EXISTS `Admin`;
+DROP TABLE IF EXISTS `Bank_Representative`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `Admin` (
-  `Admin_Id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `Bank_Representative` (
+  `Employee_Id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `First_Name` varchar(255) NOT NULL,
   `Last_Name` varchar(255) NOT NULL,
-  `Employee_Id` int NOT NULL,
-  `Admin_Type` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`Admin_Id`)
+  `Employee_Type` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`Employee_Id`),
+  UNIQUE KEY `Employee_Id` (`Employee_Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `Admin`
+-- Dumping data for table `Bank_Representative`
 --
 
-LOCK TABLES `Admin` WRITE;
-/*!40000 ALTER TABLE `Admin` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Admin` ENABLE KEYS */;
+LOCK TABLES `Bank_Representative` WRITE;
+/*!40000 ALTER TABLE `Bank_Representative` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Bank_Representative` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Business_Policies`
+--
+
+DROP TABLE IF EXISTS `Business_Policies`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Business_Policies` (
+  `Policy_Name` varchar(255) NOT NULL,
+  `Policy_Desc` text NOT NULL,
+  PRIMARY KEY (`Policy_Name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Business_Policies`
+--
+
+LOCK TABLES `Business_Policies` WRITE;
+/*!40000 ALTER TABLE `Business_Policies` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Business_Policies` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Cards`
+--
+
+DROP TABLE IF EXISTS `Cards`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Cards` (
+  `Card_Id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `Card_Type` varchar(25) NOT NULL,
+  `Account_Number` int NOT NULL,
+  `Card_Number` varchar(16) NOT NULL,
+  `Pin` varchar(4) NOT NULL,
+  `CVV` varchar(3) NOT NULL,
+  `Expiration_Date` date NOT NULL,
+  `Issue_Date` date NOT NULL,
+  `Card_Status` int NOT NULL,
+  PRIMARY KEY (`Card_Id`),
+  UNIQUE KEY `Card_Id` (`Card_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Cards`
+--
+
+LOCK TABLES `Cards` WRITE;
+/*!40000 ALTER TABLE `Cards` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Cards` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -79,8 +136,7 @@ CREATE TABLE `Credentials` (
   `User_Type` varchar(255) NOT NULL,
   `Username` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
-  KEY `Customer_Id` (`Customer_Id`),
-  CONSTRAINT `credentials_ibfk_1` FOREIGN KEY (`Customer_Id`) REFERENCES `Customer` (`Customer_Id`)
+  PRIMARY KEY (`Customer_Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -101,14 +157,15 @@ DROP TABLE IF EXISTS `Customer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Customer` (
-  `Customer_Id` int NOT NULL AUTO_INCREMENT,
+  `Customer_Id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `First_Name` varchar(255) NOT NULL,
   `Last_Name` varchar(255) NOT NULL,
   `Address` varchar(255) DEFAULT NULL,
   `Cell_Phone` varchar(15) DEFAULT NULL,
   `Email` varchar(255) DEFAULT NULL,
   `DOB` date DEFAULT NULL,
-  PRIMARY KEY (`Customer_Id`)
+  PRIMARY KEY (`Customer_Id`),
+  UNIQUE KEY `Customer_Id` (`Customer_Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -122,108 +179,49 @@ LOCK TABLES `Customer` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `Customer_Account_Rel`
+-- Table structure for table `Meeting_Schedule`
 --
 
-DROP TABLE IF EXISTS `Customer_Account_Rel`;
+DROP TABLE IF EXISTS `Meeting_Schedule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `Customer_Account_Rel` (
+CREATE TABLE `Meeting_Schedule` (
   `Customer_Id` int NOT NULL,
-  `Account_Number` int NOT NULL,
-  `Account_Type` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`Customer_Id`,`Account_Number`),
-  KEY `Account_Number` (`Account_Number`),
-  CONSTRAINT `customer_account_rel_ibfk_1` FOREIGN KEY (`Customer_Id`) REFERENCES `Customer` (`Customer_Id`),
-  CONSTRAINT `customer_account_rel_ibfk_2` FOREIGN KEY (`Account_Number`) REFERENCES `Accounts` (`Account_Number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Customer_Account_Rel`
---
-
-LOCK TABLES `Customer_Account_Rel` WRITE;
-/*!40000 ALTER TABLE `Customer_Account_Rel` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Customer_Account_Rel` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Debit_Cards`
---
-
-DROP TABLE IF EXISTS `Debit_Cards`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `Debit_Cards` (
-  `Card_Id` int NOT NULL AUTO_INCREMENT,
-  `Account_Number` int NOT NULL,
-  `Card_Number` varchar(16) NOT NULL,
-  `Pin` varchar(4) NOT NULL,
-  `CVV` varchar(3) NOT NULL,
-  `Expiration_Date` date NOT NULL,
-  `Issue_Date` date NOT NULL,
-  `Card_Status` enum('active','locked','deleted') NOT NULL,
-  PRIMARY KEY (`Card_Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Debit_Cards`
---
-
-LOCK TABLES `Debit_Cards` WRITE;
-/*!40000 ALTER TABLE `Debit_Cards` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Debit_Cards` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Interest_Rates`
---
-
-DROP TABLE IF EXISTS `Interest_Rates`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `Interest_Rates` (
-  `Account_Type` varchar(255) NOT NULL,
-  `Interest_Rate` decimal(5,2) NOT NULL,
-  PRIMARY KEY (`Account_Type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Interest_Rates`
---
-
-LOCK TABLES `Interest_Rates` WRITE;
-/*!40000 ALTER TABLE `Interest_Rates` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Interest_Rates` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Teller`
---
-
-DROP TABLE IF EXISTS `Teller`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `Teller` (
-  `Teller_Id` int NOT NULL AUTO_INCREMENT,
-  `First_Name` varchar(255) NOT NULL,
-  `Last_Name` varchar(255) NOT NULL,
   `Employee_Id` int NOT NULL,
-  `Teller_Type` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`Teller_Id`)
+  `Meeting_Time` timestamp NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `Teller`
+-- Dumping data for table `Meeting_Schedule`
 --
 
-LOCK TABLES `Teller` WRITE;
-/*!40000 ALTER TABLE `Teller` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Teller` ENABLE KEYS */;
+LOCK TABLES `Meeting_Schedule` WRITE;
+/*!40000 ALTER TABLE `Meeting_Schedule` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Meeting_Schedule` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Policy_Rates`
+--
+
+DROP TABLE IF EXISTS `Policy_Rates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Policy_Rates` (
+  `Policy_Name` varchar(255) NOT NULL,
+  `rate` decimal(5,2) NOT NULL,
+  PRIMARY KEY (`Policy_Name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Policy_Rates`
+--
+
+LOCK TABLES `Policy_Rates` WRITE;
+/*!40000 ALTER TABLE `Policy_Rates` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Policy_Rates` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -234,21 +232,16 @@ DROP TABLE IF EXISTS `Transactions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Transactions` (
-  `Transaction_Id` int NOT NULL AUTO_INCREMENT,
+  `Transaction_Id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `Transaction_Type` varchar(255) NOT NULL,
   `Transaction_Amount` decimal(10,2) NOT NULL,
   `Customer_Id` int NOT NULL,
-  `Account_From_Id` int DEFAULT NULL,
-  `Account_To_Id` int DEFAULT NULL,
-  `Timestamp_Start` datetime NOT NULL,
-  `Timestamp_End` datetime DEFAULT NULL,
+  `Account_Num_From` int DEFAULT NULL,
+  `Account_Num_To` int DEFAULT NULL,
+  `Timestamp_Start` timestamp NOT NULL,
+  `Timestamp_End` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`Transaction_Id`),
-  KEY `Customer_Id` (`Customer_Id`),
-  KEY `Account_From_Id` (`Account_From_Id`),
-  KEY `Account_To_Id` (`Account_To_Id`),
-  CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`Customer_Id`) REFERENCES `Customer` (`Customer_Id`),
-  CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`Account_From_Id`) REFERENCES `Accounts` (`Account_Number`),
-  CONSTRAINT `transactions_ibfk_3` FOREIGN KEY (`Account_To_Id`) REFERENCES `Accounts` (`Account_Number`)
+  UNIQUE KEY `Transaction_Id` (`Transaction_Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -270,4 +263,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-09-27 13:17:12
+-- Dump completed on 2023-10-16 14:48:52
